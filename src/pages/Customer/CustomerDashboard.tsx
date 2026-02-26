@@ -4,6 +4,7 @@ import {
   PlusCircle, ClipboardList, Clock, CheckCircle2,
   User, LogOut
 } from "lucide-react";
+import PostJob from "./PostJob";
 
 type Tab = "post" | "active" | "inprogress" | "done" | "profile";
 
@@ -80,75 +81,13 @@ const CustomerDashboard = () => {
         </header>
 
         <div className="px-8 py-6">
-          {activeTab === "post" && <PostPekerjaanTab />}
+          {activeTab === "post" && <PostJob />}
           {activeTab === "active" && <EmptyState icon={ClipboardList} title="Belum ada pekerjaan diposting" desc="Post pekerjaan pertamamu sekarang!" />}
           {activeTab === "inprogress" && <EmptyState icon={Clock} title="Tidak ada pekerjaan diproses" desc="Pekerjaan yang sedang dikerjakan mitra akan muncul di sini." />}
           {activeTab === "done" && <EmptyState icon={CheckCircle2} title="Belum ada riwayat" desc="Pekerjaan yang sudah selesai akan muncul di sini." />}
           {activeTab === "profile" && <ProfileTab user={user} />}
         </div>
       </main>
-    </div>
-  );
-};
-
-const PostPekerjaanTab = () => {
-  const [form, setForm] = useState({
-    title: "", description: "", category: "", location: "", price: "", isUrgent: false,
-  });
-
-  const categories = ["Antar Barang", "Belanja", "Bersih-bersih", "Perbaikan", "Lainnya"];
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // TODO: connect to API POST /api/jobs
-    alert("Fitur post pekerjaan akan segera tersedia!");
-  };
-
-  return (
-    <div className="max-w-2xl">
-      <div className="bg-card border border-border rounded-2xl p-6">
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-1.5">Judul Pekerjaan</label>
-            <input type="text" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Contoh: Ambilkan paket di Alfamart Jl. Merdeka" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition" />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-1.5">Deskripsi</label>
-            <textarea required rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Jelaskan detail pekerjaan yang kamu butuhkan..." className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition resize-none" />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">Kategori</label>
-              <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition">
-                <option value="">Pilih kategori</option>
-                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-semibold text-foreground mb-1.5">Lokasi</label>
-              <input type="text" required value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kecamatan / Kelurahan" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition" />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-1.5">Harga yang Ditawarkan (Rp)</label>
-            <input type="number" required min={0} value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Contoh: 50000" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition" />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <input type="checkbox" id="urgent" checked={form.isUrgent} onChange={(e) => setForm({ ...form, isUrgent: e.target.checked })} className="h-4 w-4 rounded border-input accent-primary" />
-            <label htmlFor="urgent" className="text-sm font-medium text-foreground">
-              Tandai sebagai <span className="text-destructive font-semibold">Mendesak</span>
-            </label>
-          </div>
-
-          <button type="submit" className="w-full gradient-cta rounded-lg px-4 py-2.5 text-sm font-bold text-accent-foreground shadow-sm transition">
-            Post Pekerjaan
-          </button>
-        </form>
-      </div>
     </div>
   );
 };
@@ -173,7 +112,9 @@ const ProfileTab = ({ user }: { user: any }) => (
           </div>
         ))}
       </div>
-      <button className="w-full mt-2 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition">Edit Profil</button>
+      <button className="w-full mt-2 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition">
+        Edit Profil
+      </button>
     </div>
   </div>
 );
