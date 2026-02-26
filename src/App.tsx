@@ -2,13 +2,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "@/pages/Index";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
+import RegisterMitra from "@/pages/RegisterMitra";
+import CustomerDashboard from "@/pages/Customer/CustomerDashboard";
+import MitraDashboard from "@/pages/Mitra/MitraDashboard";
+import AdminDashboard from "@/pages/Admin/AdminDashboard";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
-
-// Placeholder pages — ganti dengan komponen asli nanti
-const CustomerDashboard = () => <div className="p-8 text-center font-bold text-2xl">Customer Dashboard</div>;
-const MitraDashboard = () => <div className="p-8 text-center font-bold text-2xl">Mitra Dashboard</div>;
-const AdminDashboard = () => <div className="p-8 text-center font-bold text-2xl">Admin Dashboard</div>;
 
 function App() {
   return (
@@ -18,8 +17,9 @@ function App() {
         <Route path="/" element={<Index />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/register/mitra" element={<RegisterMitra />} />
 
-        {/* Customer Routes */}
+        {/* Customer */}
         <Route
           path="/customer/dashboard"
           element={
@@ -29,7 +29,7 @@ function App() {
           }
         />
 
-        {/* Mitra Routes */}
+        {/* Mitra */}
         <Route
           path="/mitra/dashboard"
           element={
@@ -39,7 +39,7 @@ function App() {
           }
         />
 
-        {/* Admin Routes */}
+        {/* Admin */}
         <Route
           path="/admin/dashboard"
           element={

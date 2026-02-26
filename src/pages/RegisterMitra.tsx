@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { User, Phone, Mail, Lock, ArrowRight, AlertCircle } from "lucide-react";
+import { User, Phone, Mail, Lock, ArrowLeft, AlertCircle } from "lucide-react";
 
-const Register = () => {
+const RegisterMitra = () => {
   const navigate = useNavigate();
   const { register } = useAuth();
   const [form, setForm] = useState({ name: "", email: "", password: "", phone: "" });
@@ -41,11 +41,10 @@ const Register = () => {
     setErrors({});
     setLoading(true);
     try {
-      await register({ ...form, role: "customer" });
-      navigate("/customer/dashboard");
+      await register({ ...form, role: "mitra" });
+      navigate("/mitra/dashboard");
     } catch (err: any) {
       const msg = err.response?.data?.message || "Registrasi gagal. Coba lagi.";
-      // Tentukan field mana yang error berdasarkan pesan backend
       if (msg.toLowerCase().includes("email")) {
         setErrors({ email: msg });
       } else if (msg.toLowerCase().includes("whatsapp") || msg.toLowerCase().includes("nomor")) {
@@ -70,7 +69,7 @@ const Register = () => {
           <Link to="/" className="text-2xl font-extrabold text-primary tracking-tight">
             sayabantu<span className="text-accent">.com</span>
           </Link>
-          <p className="mt-2 text-sm text-muted-foreground">Buat akun baru</p>
+          <p className="mt-2 text-sm text-muted-foreground">Daftar sebagai Mitra</p>
         </div>
 
         <div className="bg-card border border-border rounded-2xl shadow-sm p-8">
@@ -167,18 +166,18 @@ const Register = () => {
               disabled={loading}
               className="w-full gradient-cta rounded-lg px-4 py-2.5 text-sm font-bold text-accent-foreground shadow-sm disabled:opacity-60 transition mt-2"
             >
-              {loading ? "Mendaftarkan..." : "Daftar Sekarang"}
+              {loading ? "Mendaftarkan..." : "Daftar Sebagai Mitra"}
             </button>
           </form>
 
-          {/* Link ke mitra */}
+          {/* Link balik ke customer */}
           <div className="mt-5 rounded-xl border border-border bg-muted/40 px-4 py-3 flex items-center justify-between">
             <div>
-              <p className="text-xs font-semibold text-foreground">Ingin jadi Mitra?</p>
-              <p className="text-xs text-muted-foreground">Ambil pekerjaan & dapatkan penghasilan</p>
+              <p className="text-xs font-semibold text-foreground">Butuh bantuan?</p>
+              <p className="text-xs text-muted-foreground">Daftar sebagai customer</p>
             </div>
-            <Link to="/register/mitra" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline shrink-0 ml-3">
-              Daftar Mitra <ArrowRight className="h-3 w-3" />
+            <Link to="/register" className="flex items-center gap-1 text-xs font-bold text-primary hover:underline shrink-0 ml-3">
+              <ArrowLeft className="h-3 w-3" /> Daftar Customer
             </Link>
           </div>
 
@@ -192,4 +191,4 @@ const Register = () => {
   );
 };
 
-export default Register;
+export default RegisterMitra;

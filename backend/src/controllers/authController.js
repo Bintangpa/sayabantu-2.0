@@ -15,20 +15,31 @@ const register = async (req, res) => {
   try {
     const { name, email, password, phone, role } = req.body;
 
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: "Nama, email, dan password wajib diisi." });
+    if (!name || !email || !password || !phone) {
+      return res.status(400).json({ message: "Semua field wajib diisi." });
     }
 
-    // Role hanya boleh customer atau mitra (admin dibuat manual)
     const allowedRoles = ["customer", "mitra"];
     if (role && !allowedRoles.includes(role)) {
       return res.status(400).json({ message: "Role tidak valid." });
     }
 
     // Cek email duplikat
-    const [existing] = await db.execute("SELECT id FROM users WHERE email = ?", [email]);
-    if (existing.length > 0) {
-      return res.status(409).json({ message: "Email sudah terdaftar." });
+    const [existingEmail] = await db.execute(
+      "SELECT id FROM users WHERE email = ?",
+      [email]
+    );
+    if (existingEmail.length > 0) {
+      return res.status(409).json({ message: "Email sudah terdaftar, gunakan email lain." });
+    }
+
+    // Cek phone duplikat
+    const [existingPhone] = await db.execute(
+      "SELECT id FROM users WHERE phone = ?",
+      [phone]
+    );
+    if (existingPhone.length > 0) {
+      return res.status(409).json({ message: "Nomor WhatsApp sudah terdaftar, gunakan nomor lain." });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -36,7 +47,7 @@ const register = async (req, res) => {
 
     const [result] = await db.execute(
       "INSERT INTO users (name, email, password, phone, role) VALUES (?, ?, ?, ?, ?)",
-      [name, email, hashedPassword, phone || null, userRole]
+      [name, email, hashedPassword, phone, userRole]
     );
 
     const user = { id: result.insertId, name, email, phone, role: userRole };
@@ -94,7 +105,7 @@ const login = async (req, res) => {
   }
 };
 
-// GET /api/auth/me  (butuh token)
+// GET /api/auth/me
 const me = async (req, res) => {
   try {
     const [rows] = await db.execute(

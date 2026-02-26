@@ -1,0 +1,191 @@
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  PlusCircle, ClipboardList, Clock, CheckCircle2,
+  User, LogOut
+} from "lucide-react";
+
+type Tab = "post" | "active" | "inprogress" | "done" | "profile";
+
+const CustomerDashboard = () => {
+  const { user, logout } = useAuth();
+  const [activeTab, setActiveTab] = useState<Tab>("post");
+
+  const navItems = [
+    { id: "post", label: "Post Pekerjaan", icon: PlusCircle },
+    { id: "active", label: "Pekerjaan Saya", icon: ClipboardList },
+    { id: "inprogress", label: "Sedang Diproses", icon: Clock },
+    { id: "done", label: "Riwayat Selesai", icon: CheckCircle2 },
+    { id: "profile", label: "Profil", icon: User },
+  ] as const;
+
+  return (
+    <div className="min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <aside className="w-60 shrink-0 border-r border-border bg-card flex flex-col">
+        <div className="px-5 py-5 border-b border-border">
+          <span className="text-lg font-extrabold text-primary tracking-tight">
+            sayabantu<span className="text-accent">.com</span>
+          </span>
+          <p className="text-xs text-muted-foreground mt-0.5">Customer Panel</p>
+        </div>
+
+        <div className="px-5 py-4 border-b border-border">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
+              <User className="h-4 w-4 text-primary" />
+            </div>
+            <div className="overflow-hidden">
+              <p className="text-sm font-semibold text-foreground truncate">{user?.name}</p>
+              <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            </div>
+          </div>
+        </div>
+
+        <nav className="flex-1 px-3 py-4 space-y-1">
+          {navItems.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveTab(id)}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                activeTab === id
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+              }`}
+            >
+              <Icon className="h-4 w-4 shrink-0" />
+              {label}
+            </button>
+          ))}
+        </nav>
+
+        <div className="px-3 py-4 border-t border-border">
+          <button
+            onClick={logout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all"
+          >
+            <LogOut className="h-4 w-4" />
+            Keluar
+          </button>
+        </div>
+      </aside>
+
+      {/* Main */}
+      <main className="flex-1 overflow-auto">
+        <header className="border-b border-border bg-card px-8 py-4">
+          <h1 className="text-lg font-bold text-foreground">
+            {navItems.find((n) => n.id === activeTab)?.label}
+          </h1>
+          <p className="text-xs text-muted-foreground">Selamat datang, {user?.name}</p>
+        </header>
+
+        <div className="px-8 py-6">
+          {activeTab === "post" && <PostPekerjaanTab />}
+          {activeTab === "active" && <EmptyState icon={ClipboardList} title="Belum ada pekerjaan diposting" desc="Post pekerjaan pertamamu sekarang!" />}
+          {activeTab === "inprogress" && <EmptyState icon={Clock} title="Tidak ada pekerjaan diproses" desc="Pekerjaan yang sedang dikerjakan mitra akan muncul di sini." />}
+          {activeTab === "done" && <EmptyState icon={CheckCircle2} title="Belum ada riwayat" desc="Pekerjaan yang sudah selesai akan muncul di sini." />}
+          {activeTab === "profile" && <ProfileTab user={user} />}
+        </div>
+      </main>
+    </div>
+  );
+};
+
+const PostPekerjaanTab = () => {
+  const [form, setForm] = useState({
+    title: "", description: "", category: "", location: "", price: "", isUrgent: false,
+  });
+
+  const categories = ["Antar Barang", "Belanja", "Bersih-bersih", "Perbaikan", "Lainnya"];
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // TODO: connect to API POST /api/jobs
+    alert("Fitur post pekerjaan akan segera tersedia!");
+  };
+
+  return (
+    <div className="max-w-2xl">
+      <div className="bg-card border border-border rounded-2xl p-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Judul Pekerjaan</label>
+            <input type="text" required value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Contoh: Ambilkan paket di Alfamart Jl. Merdeka" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition" />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Deskripsi</label>
+            <textarea required rows={4} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Jelaskan detail pekerjaan yang kamu butuhkan..." className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition resize-none" />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Kategori</label>
+              <select required value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition">
+                <option value="">Pilih kategori</option>
+                {categories.map((c) => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-1.5">Lokasi</label>
+              <input type="text" required value={form.location} onChange={(e) => setForm({ ...form, location: e.target.value })} placeholder="Kecamatan / Kelurahan" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition" />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-1.5">Harga yang Ditawarkan (Rp)</label>
+            <input type="number" required min={0} value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="Contoh: 50000" className="w-full rounded-lg border border-input bg-background px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition" />
+          </div>
+
+          <div className="flex items-center gap-3">
+            <input type="checkbox" id="urgent" checked={form.isUrgent} onChange={(e) => setForm({ ...form, isUrgent: e.target.checked })} className="h-4 w-4 rounded border-input accent-primary" />
+            <label htmlFor="urgent" className="text-sm font-medium text-foreground">
+              Tandai sebagai <span className="text-destructive font-semibold">Mendesak</span>
+            </label>
+          </div>
+
+          <button type="submit" className="w-full gradient-cta rounded-lg px-4 py-2.5 text-sm font-bold text-accent-foreground shadow-sm transition">
+            Post Pekerjaan
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+const ProfileTab = ({ user }: { user: any }) => (
+  <div className="max-w-md">
+    <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+      <div className="flex items-center gap-4">
+        <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+          <User className="h-8 w-8 text-primary" />
+        </div>
+        <div>
+          <p className="text-lg font-bold text-foreground">{user?.name}</p>
+          <p className="text-sm text-muted-foreground">Customer</p>
+        </div>
+      </div>
+      <div className="space-y-3 pt-2">
+        {[{ label: "Email", value: user?.email }, { label: "No. WhatsApp", value: user?.phone || "-" }].map(({ label, value }) => (
+          <div key={label} className="flex items-center justify-between py-2 border-b border-border">
+            <span className="text-sm text-muted-foreground">{label}</span>
+            <span className="text-sm font-medium text-foreground">{value}</span>
+          </div>
+        ))}
+      </div>
+      <button className="w-full mt-2 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition">Edit Profil</button>
+    </div>
+  </div>
+);
+
+const EmptyState = ({ icon: Icon, title, desc }: { icon: any; title: string; desc: string }) => (
+  <div className="flex flex-col items-center justify-center py-20 text-center">
+    <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+      <Icon className="h-8 w-8 text-muted-foreground" />
+    </div>
+    <p className="text-base font-bold text-foreground">{title}</p>
+    <p className="text-sm text-muted-foreground mt-1">{desc}</p>
+  </div>
+);
+
+export default CustomerDashboard;
