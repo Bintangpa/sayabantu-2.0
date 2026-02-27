@@ -1,12 +1,18 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import HeroSection from "@/components/HeroSection";
 import SearchFilter from "@/components/SearchFilter";
 import JobCard from "@/components/JobCard";
 import LockedModal from "@/components/LockedModal";
 import WhyJoinSection from "@/components/WhyJoinSection";
+import { useAuth } from "@/hooks/useAuth";
 import { mockJobs, type Job } from "@/data/jobs";
+import { LogIn, UserPlus, LayoutDashboard, LogOut } from "lucide-react";
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, user, role, logout } = useAuth();
+
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
   const [selectedLocation, setSelectedLocation] = useState("Semua Lokasi");
@@ -25,8 +31,21 @@ const Index = () => {
   }, [searchQuery, selectedCategory, selectedLocation, urgentOnly]);
 
   const handleViewDetail = (job: Job) => {
-    setSelectedJob(job);
-    setModalOpen(true);
+    if (!isAuthenticated) {
+      setSelectedJob(job);
+      setModalOpen(true);
+    } else {
+      // kalau sudah login arahkan ke dashboard
+      if (role === "mitra") navigate("/mitra/dashboard");
+      else if (role === "customer") navigate("/customer/dashboard");
+      else navigate("/admin/dashboard");
+    }
+  };
+
+  const handleDashboard = () => {
+    if (role === "admin") navigate("/admin/dashboard");
+    else if (role === "mitra") navigate("/mitra/dashboard");
+    else navigate("/customer/dashboard");
   };
 
   return (
@@ -38,12 +57,44 @@ const Index = () => {
             sayabantu<span className="text-accent">.com</span>
           </span>
           <div className="flex items-center gap-2">
-            <button className="rounded-lg px-3 py-1.5 text-xs font-semibold text-primary-foreground/80 hover:text-primary-foreground transition-colors">
-              Login
-            </button>
-            <button className="gradient-cta rounded-lg px-3 py-1.5 text-xs font-bold text-accent-foreground shadow-sm">
-              Daftar Mitra
-            </button>
+            {isAuthenticated ? (
+              <>
+                <span className="text-xs text-primary-foreground/70 hidden sm:block">
+                  Halo, {user?.name}
+                </span>
+                <button
+                  onClick={handleDashboard}
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                >
+                  <LayoutDashboard className="h-3.5 w-3.5" />
+                  Dashboard
+                </button>
+                <button
+                  onClick={logout}
+                  className="flex items-center gap-1.5 gradient-cta rounded-lg px-3 py-1.5 text-xs font-bold text-accent-foreground shadow-sm"
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                  Keluar
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold text-primary-foreground/80 hover:text-primary-foreground transition-colors"
+                >
+                  <LogIn className="h-3.5 w-3.5" />
+                  Login
+                </button>
+                <button
+                  onClick={() => navigate("/register/mitra")}
+                  className="flex items-center gap-1.5 gradient-cta rounded-lg px-3 py-1.5 text-xs font-bold text-accent-foreground shadow-sm"
+                >
+                  <UserPlus className="h-3.5 w-3.5" />
+                  Daftar Mitra
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -89,7 +140,6 @@ const Index = () => {
       </section>
 
       <WhyJoinSection />
-
       <LockedModal job={selectedJob} isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );

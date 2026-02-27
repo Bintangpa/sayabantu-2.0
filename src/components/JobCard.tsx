@@ -1,4 +1,4 @@
-import { Clock, Eye, MapPin, Users } from "lucide-react";
+import { Clock, Eye, MapPin, Users, Flame, BadgeDollarSign, Sparkles } from "lucide-react";
 import type { Job } from "@/data/jobs";
 
 interface JobCardProps {
@@ -16,17 +16,17 @@ const JobCard = ({ job, onViewDetail }: JobCardProps) => {
       <div className="mb-3 flex flex-wrap gap-1.5">
         {job.isUrgent && (
           <span className="inline-flex items-center gap-1 rounded-md bg-urgent/15 px-2 py-0.5 text-xs font-bold text-urgent">
-            🔥 Butuh Cepat
+            <Flame className="h-3 w-3" /> Butuh Cepat
           </span>
         )}
         {job.isHighPay && (
           <span className="inline-flex items-center gap-1 rounded-md bg-high-pay/15 px-2 py-0.5 text-xs font-bold text-high-pay">
-            💰 Bayaran Tinggi
+            <BadgeDollarSign className="h-3 w-3" /> Bayaran Tinggi
           </span>
         )}
         {job.isNew && (
           <span className="inline-flex items-center gap-1 rounded-md bg-new-badge/15 px-2 py-0.5 text-xs font-bold text-new-badge">
-            🆕 Baru
+            <Sparkles className="h-3 w-3" /> Baru
           </span>
         )}
       </div>
@@ -52,7 +52,7 @@ const JobCard = ({ job, onViewDetail }: JobCardProps) => {
         {formatCurrency(job.budgetMin)} – {formatCurrency(job.budgetMax)}
       </p>
 
-      {/* Social proof & urgent countdown */}
+      {/* Social proof */}
       <div className="mb-4 flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
         <span className="inline-flex items-center gap-1">
           <Eye className="h-3 w-3" /> {job.viewerCount} mitra melihat
@@ -64,7 +64,7 @@ const JobCard = ({ job, onViewDetail }: JobCardProps) => {
         )}
         {job.urgentDeadline && (
           <span className="inline-flex items-center gap-1 font-semibold text-urgent">
-            ⏳ {job.urgentDeadline}
+            <Clock className="h-3 w-3" /> {job.urgentDeadline}
           </span>
         )}
       </div>
@@ -74,7 +74,7 @@ const JobCard = ({ job, onViewDetail }: JobCardProps) => {
         onClick={() => onViewDetail(job)}
         className="w-full rounded-xl bg-primary py-3 text-sm font-bold text-primary-foreground shadow-sm transition-all hover:shadow-md hover:bg-primary/90 active:scale-[0.98]"
       >
-        Lihat Detail →
+        Lihat Detail
       </button>
     </div>
   );

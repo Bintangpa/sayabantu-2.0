@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { createJob, getOpenJobs, getMyJobs, takeJob } = require("../controllers/jobController");
+const { createJob, getOpenJobs, getMyJobs, takeJob, getStats } = require("../controllers/jobController");
 const { authenticate, authorize } = require("../middleware/auth");
+
+// Public — stats untuk hero section
+router.get("/stats", getStats);
 
 // Customer post pekerjaan
 router.post("/", authenticate, authorize("customer"), createJob);

@@ -1,4 +1,6 @@
 import { CheckCircle, DollarSign, Zap, Shield, TrendingUp, Clock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/hooks/useAuth";
 
 const reasons = [
   { icon: Zap, title: "Mulai Cepat", desc: "Daftar 2 menit, langsung bisa ambil pekerjaan." },
@@ -16,6 +18,14 @@ const testimonials = [
 ];
 
 const WhyJoinSection = () => {
+  const navigate = useNavigate();
+  const { isAuthenticated, role } = useAuth();
+
+  const handleDaftarMitra = () => {
+    if (isAuthenticated && role === "mitra") navigate("/mitra/dashboard");
+    else navigate("/register/mitra");
+  };
+
   return (
     <>
       {/* Why Join */}
@@ -75,8 +85,12 @@ const WhyJoinSection = () => {
           <p className="mb-6 text-sm text-primary-foreground/70">
             Daftar sekarang dan ambil pekerjaan pertama Anda hari ini.
           </p>
-          <button className="gradient-cta rounded-xl px-10 py-4 text-lg font-bold text-accent-foreground shadow-lg shadow-accent/30 transition-all hover:shadow-xl hover:-translate-y-0.5">
-            🚀 Daftar Jadi Mitra Sekarang
+          <button
+            onClick={handleDaftarMitra}
+            className="gradient-cta rounded-xl px-10 py-4 text-lg font-bold text-accent-foreground shadow-lg shadow-accent/30 transition-all hover:shadow-xl hover:-translate-y-0.5 inline-flex items-center gap-2"
+          >
+            <Zap className="h-5 w-5" />
+            Daftar Jadi Mitra Sekarang
           </button>
         </div>
       </section>

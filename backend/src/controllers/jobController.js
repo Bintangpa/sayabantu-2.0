@@ -18,17 +18,14 @@ const createJob = async (req, res) => {
       [customer_id, title, description, category, location, price, is_urgent ? 1 : 0]
     );
 
-    return res.status(201).json({
-      message: "Pekerjaan berhasil diposting.",
-      jobId: result.insertId,
-    });
+    return res.status(201).json({ message: "Pekerjaan berhasil diposting.", jobId: result.insertId });
   } catch (err) {
     console.error("Create job error:", err);
     return res.status(500).json({ message: "Terjadi kesalahan server." });
   }
 };
 
-// GET /api/jobs — semua job yang open (untuk mitra)
+// GET /api/jobs — semua job open (untuk mitra)
 const getOpenJobs = async (req, res) => {
   try {
     const [rows] = await db.execute(
@@ -45,7 +42,7 @@ const getOpenJobs = async (req, res) => {
   }
 };
 
-// GET /api/jobs/my — job milik customer yang login
+// GET /api/jobs/my — job milik customer
 const getMyJobs = async (req, res) => {
   try {
     const [rows] = await db.execute(
@@ -90,4 +87,17 @@ const takeJob = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getOpenJobs, getMyJobs, takeJob };
+// GET /api/jobs/stats — statistik untuk hero section (public)
+const getStats = async (req, res) => {
+  try {
+    const [[{ total }]] = await db.execute("SELECT COUNT(*) as total FROM jobs WHERE status = 'open'");
+    const [[{ urgent }]] = await db.execute("SELECT COUNT(*) as urgent FROM jobs WHERE status = 'open' AND is_urgent = 1");
+    const [[{ mitras }]] = await db.execute("SELECT COUNT(*) as mitras FROM users WHERE role = 'mitra' AND is_active = 1");
+    return res.json({ total, urgent, mitras });
+  } catch (err) {
+    console.error("Stats error:", err);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};
+
+module.exports = { createJob, getOpenJobs, getMyJobs, takeJob, getStats };
