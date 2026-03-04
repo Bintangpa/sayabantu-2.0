@@ -60,6 +60,24 @@ const getMyJobs = async (req, res) => {
   }
 };
 
+// GET /api/jobs/mitra/my — job yang diambil mitra yang login
+const getMyMitraJobs = async (req, res) => {
+  try {
+    const [rows] = await db.execute(
+      `SELECT j.*, u.name as customer_name, u.phone as customer_phone
+       FROM jobs j
+       JOIN users u ON j.customer_id = u.id
+       WHERE j.taken_by = ?
+       ORDER BY j.updated_at DESC`,
+      [req.user.id]
+    );
+    return res.json({ jobs: rows });
+  } catch (err) {
+    console.error("Get mitra jobs error:", err);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};
+
 // PUT /api/jobs/:id/take — mitra ambil pekerjaan
 const takeJob = async (req, res) => {
   try {
@@ -100,4 +118,4 @@ const getStats = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getOpenJobs, getMyJobs, takeJob, getStats };
+module.exports = { createJob, getOpenJobs, getMyJobs, getMyMitraJobs, takeJob, getStats };

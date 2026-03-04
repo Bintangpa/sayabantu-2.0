@@ -4,7 +4,11 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import RegisterMitra from "@/pages/RegisterMitra";
 import CustomerDashboard from "@/pages/Customer/CustomerDashboard";
+import CustomerJobs from "@/pages/Customer/CustomerJobs";
+import CustomerPostJob from "@/pages/Customer/CustomerPostJob";
 import MitraDashboard from "@/pages/Mitra/MitraDashboard";
+import JobListing from "@/pages/Mitra/JobListing";
+import EditProfileMitra from "@/pages/Mitra/EditProfileMitra";
 import AdminDashboard from "@/pages/Admin/AdminDashboard";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -28,6 +32,22 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/customer/jobs"
+          element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <CustomerJobs />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/customer/post-job"
+          element={
+            <ProtectedRoute allowedRoles={["customer"]}>
+              <CustomerPostJob />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Mitra */}
         <Route
@@ -35,6 +55,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["mitra"]}>
               <MitraDashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mitra/jobs"
+          element={
+            <ProtectedRoute allowedRoles={["mitra"]}>
+              <JobListing />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/mitra/edit-profile"
+          element={
+            <ProtectedRoute allowedRoles={["mitra"]}>
+              <EditProfileMitra />
             </ProtectedRoute>
           }
         />

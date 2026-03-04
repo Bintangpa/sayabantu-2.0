@@ -1,21 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { createJob, getOpenJobs, getMyJobs, takeJob, getStats } = require("../controllers/jobController");
+const { createJob, getOpenJobs, getMyJobs, getMyMitraJobs, takeJob, getStats } = require("../controllers/jobController");
 const { authenticate, authorize } = require("../middleware/auth");
 
-// Public — stats untuk hero section
+// Public
 router.get("/stats", getStats);
 
-// Customer post pekerjaan
+// Customer
 router.post("/", authenticate, authorize("customer"), createJob);
-
-// Mitra lihat semua pekerjaan open
-router.get("/", authenticate, authorize("mitra", "admin"), getOpenJobs);
-
-// Customer lihat pekerjaan miliknya
 router.get("/my", authenticate, authorize("customer"), getMyJobs);
 
-// Mitra ambil pekerjaan
+// Mitra
+router.get("/mitra/my", authenticate, authorize("mitra"), getMyMitraJobs);
+router.get("/", authenticate, authorize("mitra", "admin"), getOpenJobs);
 router.put("/:id/take", authenticate, authorize("mitra"), takeJob);
 
 module.exports = router;
