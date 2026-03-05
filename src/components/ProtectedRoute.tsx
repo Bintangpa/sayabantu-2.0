@@ -9,6 +9,7 @@ interface ProtectedRouteProps {
 const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   const { isAuthenticated, role, isLoading } = useAuth();
 
+  // Selama auth belum selesai dicek, jangan render apapun — cegah flash/glitch
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -22,7 +23,6 @@ const ProtectedRoute = ({ children, allowedRoles }: ProtectedRouteProps) => {
   }
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {
-    // Redirect ke dashboard sesuai role masing-masing
     if (role === "admin") return <Navigate to="/admin/dashboard" replace />;
     if (role === "mitra") return <Navigate to="/mitra/dashboard" replace />;
     return <Navigate to="/customer/dashboard" replace />;

@@ -118,4 +118,38 @@ const getStats = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getOpenJobs, getMyJobs, getMyMitraJobs, takeJob, getStats };
+// GET /api/jobs/mitra/history — riwayat pekerjaan selesai milik mitra
+const getMitraHistory = async (req, res) => {
+  try {
+    const { category, sort } = req.query;
+
+    let query = `
+      SELECT j.*, u.name as customer_name, u.phone as customer_phone
+      FROM jobs j
+      JOIN users u ON j.customer_id = u.id
+      WHERE j.taken_by = ? AND j.status = 'done'
+    `;
+    const params = [req.user.id];
+
+    if (category && category !== "Semua") {
+      query += " AND j.category = ?";
+      params.push(category);
+    }
+
+    const orderMap = {
+      newest: "j.updated_at DESC",
+      oldest: "j.updated_at ASC",
+      highest: "j.price DESC",
+      lowest: "j.price ASC",
+    };
+    query += ` ORDER BY ${orderMap[sort] || "j.updated_at DESC"}`;
+
+    const [rows] = await db.execute(query, params);
+    return res.json({ jobs: rows });
+  } catch (err) {
+    console.error("Get mitra history error:", err);
+    return res.status(500).json({ message: "Terjadi kesalahan server." });
+  }
+};
+
+module.exports = { createJob, getOpenJobs, getMyJobs, getMyMitraJobs, getMitraHistory, takeJob, getStats };

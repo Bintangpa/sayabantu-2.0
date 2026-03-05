@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Navigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import HeroSection from "@/components/HeroSection";
 import WhyJoinSection from "@/components/WhyJoinSection";
@@ -9,19 +8,17 @@ const Index = () => {
   const navigate = useNavigate();
   const { isAuthenticated, user, role, logout, isLoading } = useAuth();
 
-  useEffect(() => {
-    if (!isLoading && isAuthenticated && role === "mitra") {
-      navigate("/mitra/jobs");
-    }
-  }, [isLoading, isAuthenticated, role]);
-
-  // Tunggu auth selesai dulu — cegah glitch landing page muncul sebentar
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="h-8 w-8 rounded-full border-4 border-primary border-t-transparent animate-spin" />
       </div>
     );
+  }
+
+  // Redirect mitra langsung tanpa useEffect
+  if (!isLoading && isAuthenticated && role === "mitra") {
+    return <Navigate to="/mitra/jobs" replace />;
   }
 
   const handleDashboard = () => {

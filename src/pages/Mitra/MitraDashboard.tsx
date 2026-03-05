@@ -5,7 +5,7 @@ import api from "@/lib/api";
 import {
   Briefcase, Clock, CheckCircle2, User, LogOut,
   MessageCircle, CheckCircle, MapPin, Tag, ExternalLink,
-  TrendingUp, Star, Phone, Mail, RefreshCw
+  TrendingUp, Star, Phone, Mail, RefreshCw, History
 } from "lucide-react";
 
 type Tab = "overview" | "inprogress" | "done" | "profile";
@@ -113,7 +113,7 @@ const MitraDashboard = () => {
             </button>
           ))}
 
-          <div className="pt-2 border-t border-border mt-2">
+          <div className="pt-2 border-t border-border mt-2 space-y-1">
             <button
               onClick={() => navigate("/mitra/jobs")}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
@@ -121,6 +121,18 @@ const MitraDashboard = () => {
               <Briefcase className="h-4 w-4 shrink-0" />
               Cari Pekerjaan
               <ExternalLink className="h-3 w-3 ml-auto" />
+            </button>
+            <button
+              onClick={() => navigate("/mitra/history")}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
+            >
+              <History className="h-4 w-4 shrink-0" />
+              Riwayat Pekerjaan
+              {doneJobs.length > 0 && (
+                <span className="ml-auto text-xs rounded-full px-1.5 py-0.5 font-bold bg-primary/10 text-primary">
+                  {doneJobs.length}
+                </span>
+              )}
             </button>
           </div>
         </nav>

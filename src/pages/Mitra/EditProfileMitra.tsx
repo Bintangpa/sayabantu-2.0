@@ -56,7 +56,7 @@ const EditProfileMitra = () => {
   };
 
   const inputClass = (field: string) =>
-    `w-full rounded-xl border ${errors[field] ? "border-destructive" : "border-input"} bg-background px-3 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition`;
+    `w-full rounded-xl border ${errors[field] ? "border-destructive" : "border-input"} bg-background px-3 py-2.5 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary transition [&::-ms-reveal]:hidden [&::-webkit-credentials-auto-fill-button]:hidden [&::-webkit-textfield-decoration-container]:hidden`;
 
   return (
     <div className="min-h-screen bg-background flex items-start justify-center pt-12 px-4">
