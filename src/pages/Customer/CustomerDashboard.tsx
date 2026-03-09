@@ -1,23 +1,21 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import {
-  PlusCircle, ClipboardList, Clock, CheckCircle2,
-  User, LogOut
-} from "lucide-react";
+import { PlusCircle, ClipboardList, User, LogOut } from "lucide-react";
 import PostJob from "./PostJob";
+import CustomerMyJobs from "./CustomerMyJobs";
 
-type Tab = "post" | "active" | "inprogress" | "done" | "profile";
+type Tab = "post" | "myjobs" | "profile";
 
 const CustomerDashboard = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<Tab>("post");
 
   const navItems = [
-    { id: "post", label: "Post Pekerjaan", icon: PlusCircle },
-    { id: "active", label: "Pekerjaan Saya", icon: ClipboardList },
-    { id: "inprogress", label: "Sedang Diproses", icon: Clock },
-    { id: "done", label: "Riwayat Selesai", icon: CheckCircle2 },
-    { id: "profile", label: "Profil", icon: User },
+    { id: "post",    label: "Post Pekerjaan",  icon: PlusCircle },
+    { id: "myjobs",  label: "Pekerjaan Saya",  icon: ClipboardList },
+    { id: "profile", label: "Profil",           icon: User },
   ] as const;
 
   return (
@@ -25,7 +23,7 @@ const CustomerDashboard = () => {
       {/* Sidebar */}
       <aside className="w-60 shrink-0 border-r border-border bg-card flex flex-col">
         <div className="px-5 py-5 border-b border-border">
-          <span className="text-lg font-extrabold text-primary tracking-tight">
+          <span onClick={() => navigate("/")} className="text-lg font-extrabold text-primary tracking-tight cursor-pointer">
             sayabantu<span className="text-accent">.com</span>
           </span>
           <p className="text-xs text-muted-foreground mt-0.5">Customer Panel</p>
@@ -81,10 +79,12 @@ const CustomerDashboard = () => {
         </header>
 
         <div className="px-8 py-6">
-          {activeTab === "post" && <PostJob />}
-          {activeTab === "active" && <EmptyState icon={ClipboardList} title="Belum ada pekerjaan diposting" desc="Post pekerjaan pertamamu sekarang!" />}
-          {activeTab === "inprogress" && <EmptyState icon={Clock} title="Tidak ada pekerjaan diproses" desc="Pekerjaan yang sedang dikerjakan mitra akan muncul di sini." />}
-          {activeTab === "done" && <EmptyState icon={CheckCircle2} title="Belum ada riwayat" desc="Pekerjaan yang sudah selesai akan muncul di sini." />}
+          {activeTab === "post" && (
+            <PostJob onSuccess={() => setActiveTab("myjobs")} />
+          )}
+          {activeTab === "myjobs" && (
+            <CustomerMyJobs onPostJob={() => setActiveTab("post")} />
+          )}
           {activeTab === "profile" && <ProfileTab user={user} />}
         </div>
       </main>
@@ -112,20 +112,7 @@ const ProfileTab = ({ user }: { user: any }) => (
           </div>
         ))}
       </div>
-      <button className="w-full mt-2 rounded-lg border border-border px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted transition">
-        Edit Profil
-      </button>
     </div>
-  </div>
-);
-
-const EmptyState = ({ icon: Icon, title, desc }: { icon: any; title: string; desc: string }) => (
-  <div className="flex flex-col items-center justify-center py-20 text-center">
-    <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-      <Icon className="h-8 w-8 text-muted-foreground" />
-    </div>
-    <p className="text-base font-bold text-foreground">{title}</p>
-    <p className="text-sm text-muted-foreground mt-1">{desc}</p>
   </div>
 );
 
